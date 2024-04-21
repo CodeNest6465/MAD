@@ -1,0 +1,740 @@
+prg1:
+
+package com.example.buttonclick;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
+import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CalendarView;
+import android.widget.CompoundButton;
+import android.widget.ImageButton;
+import android.widget.Switch;
+import android.widget.Toast;
+
+import com.google.android.material.snackbar.Snackbar;
+
+public class MainActivity extends AppCompatActivity {
+     Button USN;
+     Switch s;
+     ImageButton i;
+     ConstraintLayout cl;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        USN = findViewById(R.id.NAME);
+        s = findViewById(R.id.state);
+        i =findViewById(R.id.imgbtn);
+        cl = findViewById(R.id.Cl);
+
+        s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    i.setEnabled(true);
+                    s.setText("Enabled");
+                }
+                else  {
+                    i.setEnabled(false);
+                    s.setText("Disabled");
+                }
+            }
+        });
+        USN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(),"button clicked",Toast.LENGTH_LONG).show();
+            }
+        });
+        i.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Snackbar.make(v,"snackbar message",Snackbar.LENGTH_LONG).show();
+            }
+        });
+        CalendarView cv = new CalendarView(getApplicationContext());
+        ConstraintLayout.LayoutParams p = new ConstraintLayout.LayoutParams(
+                ConstraintLayout.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT );
+        cl.addView(cv,p);
+    }
+}
+
+
+----------------
+
+
+prg2:
+
+
+
+package com.example.prg2;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+public class MainActivity extends AppCompatActivity {
+Button btn;
+ProgressBar pb;
+TextView text;
+int ProgressStatus =0;
+Handler handler = new Handler();
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        btn = findViewById(R.id.btn);
+        pb = findViewById(R.id.pro);
+        text =findViewById(R.id.textView);
+        
+        new  Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (ProgressStatus<100)
+                {
+                    ProgressStatus +=1;
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            pb.setProgress(ProgressStatus);
+                            text.setText(ProgressStatus+"%");
+                        }
+                    });
+                    try {
+                        Thread.sleep(200);
+                    }
+                    catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    }
+                }
+        }).start();
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setCancelable(false);
+                builder.setIcon(R.drawable.alert);
+                builder.setTitle("Alert!");
+                builder.setMessage("Are You sure want to Exit");
+                builder.setPositiveButton("Accept" ,(dialog, which) ->
+                {
+                    finish();
+                });
+                builder.setNegativeButton("Reject" ,(dialog, which) ->
+                {
+                    dialog.cancel();
+                });
+                builder.setNeutralButton("Cancel" ,(dialog, which) ->
+                {
+                    dialog.cancel();
+                });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+            }
+        });
+    }
+}
+
+---------
+prg3:
+
+
+package com.example.prg3;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+
+public class MainActivity extends AppCompatActivity {
+    Button btn;
+    EditText e_text;
+
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        btn = findViewById(R.id.button);
+        e_text = findViewById(R.id.editText);
+
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String str = e_text.getText().toString();
+                Intent i = new Intent(MainActivity.this,SecondActivity.class);
+                i.putExtra("message",str);
+                startActivity(i);
+            }
+        });
+    }
+}
+
+---
+package com.example.prg3;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.TextView;
+
+public class SecondActivity extends AppCompatActivity {
+
+TextView rec_message;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_second);
+
+        rec_message = findViewById(R.id.textView3);
+
+        Intent i = getIntent();
+        String str = i.getStringExtra("message");
+        rec_message.setText(str);
+    }
+}
+
+-------------
+prg4
+
+package com.example.prg4;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
+import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
+
+public class MainActivity extends AppCompatActivity {
+    FragmentOne fragmentOne = new FragmentOne();
+    FragmentTwo fragmentTwo = new FragmentTwo();
+
+    int showing_frag = 0;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.add(R.id.clayout,fragmentOne);
+        ft.commit();
+    }
+    public void switchFrag(View v)
+    {
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        if(showing_frag == 1) {
+            ft.replace(R.id.clayout,fragmentTwo);
+            showing_frag = 2;
+        }
+        else {
+            ft.replace(R.id.clayout,fragmentOne);
+            showing_frag = 1;
+        }
+        ft.commit();
+    }
+}
+
+
+--------------
+
+prg5:
+
+
+package com.example.databaseprg;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+
+import com.google.android.material.snackbar.Snackbar;
+
+public class MainActivity extends AppCompatActivity {
+    EditText uname,paswd;
+    Button login,cancel;
+    DbHandler db;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        uname = findViewById(R.id.editText1);
+        paswd = findViewById(R.id.editText2);
+        login = findViewById(R.id.button);
+        cancel = findViewById(R.id.button2);
+
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String name = uname.getText().toString();
+                String password = paswd.getText().toString();
+
+                int id = checkUser(new User(name,password));
+
+                if(id==-1){
+                    Snackbar.make(v,"User"+name+"Does not Exist",Snackbar.LENGTH_LONG).show();
+                }
+                else {
+                    Snackbar.make(v,"User"+name+" Exist",Snackbar.LENGTH_LONG).show();
+                    Intent i =new Intent(MainActivity.this,SecondActivity.class);
+                    startActivity(i);
+                }
+            }
+        });
+        db = new DbHandler(MainActivity.this);
+        db.addUser(new User("123","12345"));
+        db.addUser(new User("Free","Software"));
+        db.addUser(new User("Hello","World"));
+
+    }
+    public int checkUser(User user) {
+        return db.checkUser(user);
+    }
+}
+
+---
+
+Db handler:
+
+package com.example.databaseprg;
+
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+
+
+class DbHandler extends SQLiteOpenHelper {
+
+    private static final int Db_Version = 1;
+    private static final String Db_name="users", Table_Name= "user",User_id="id",User_name="name",User_password="password";
+    public DbHandler(MainActivity context) {
+        super(context,Db_name,null,Db_Version);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+
+        String Create_Table = "CREATE TABLE " + Table_Name + "("+ User_id + " INTEGER PRIMARY KEY," + User_name + " TEXT," + User_password + " TEXT" +")";
+        db.execSQL(Create_Table);
+    }
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion,int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS " + Table_Name);
+        onCreate(db);
+    }
+    public void addUser(User usr) {
+        SQLiteDatabase  db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(User_name,usr.getName());
+        cv.put(User_password,usr.getPassword());
+        db.insert(Table_Name,null,cv);
+        db.close();
+    }
+
+    public int checkUser(User user) {
+        int id = -1;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT id FROM user WHERE name=? AND password=?", new String[]
+                        {
+                                user.getName(),user.getPassword()
+                        });
+        if(c.getCount()>0)
+        {
+            c.moveToFirst();
+            id=c.getInt(0);
+            c.close();
+        }
+        return id;
+    }
+}
+
+------------
+prg6:
+
+package com.example.smsprg;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.telephony.SmsManager;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+
+import com.google.android.material.snackbar.Snackbar;
+
+public class MainActivity extends AppCompatActivity {
+    EditText txt1, txt2;
+    Button btn;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        txt1 = findViewById(R.id.editText1);    
+        txt2 = findViewById(R.id.editText2);
+        btn = findViewById(R.id.btn);
+        }
+    public void click(View v) {
+    try {
+        SmsManager sm = SmsManager.getDefault();
+        sm.sendTextMessage(txt1.getText().toString(),null,txt2.getText().toString(),null,null);
+        Snackbar.make(v,"SMS sent Successfully",Snackbar.LENGTH_LONG).show();
+
+    }
+    catch (Exception e) {
+        Snackbar.make(v,"SMS Not sent Successfully",Snackbar.LENGTH_LONG).show();
+
+    }
+    }
+}
+-----------------
+
+prg7:
+
+
+const cacheName = 'site-cache-v1'
+const assetsToCache = [
+"/",
+"/index.html",
+
+]
+    self.addEventListener('install', (event) => {
+    event.waitUntil (
+        caches.open(cacheName).then ((cache) => {
+            return cache.addAll(assetsToCache);
+         })
+        );
+    });
+
+    self.addEventListener('activate', (event) => {
+        event.waitUntil (
+            caches.open(cacheName).then ((cache) => {
+                return cache.addAll(assetsToCache);
+             })
+            );
+        });
+        
+---------
+<script>
+    if('serviceWorker' in navigator) {
+        window.addEventListener('load',()=> {
+            navigator.serviceWorker.register('sw.js',{
+                scope: "/"
+            })
+                .then(registration => {
+                    console.log('service worker is registered',registration);
+                })
+                .catch(err => {
+                    console.log('Registration failed',err);
+                })
+        })
+    }
+</script>
+
+
+
+
+----------------
+prg8:
+
+
+{
+    "name" : "Login Page",
+    "short_name" : "Login",
+    "description" : "A Simple Login Page",
+    "id" : "./",
+    "start_url" : "./",
+    "scope" : ".",
+    "display" : "standalone",
+    "theme_color" : "#4CAF50",
+    "background_color" : "#4CAF50",
+    "orientation" : "portrait",
+    "display_override" : ["window-controls-overlay"],
+    "protocol_handler" : [
+        {
+            "protocol" : "web+tea",
+            "url" : "/tea?type=%s"
+        },
+        {
+            "protocol" : "web+coffee",
+            "url" : "/coffee?type=%s"
+        }
+    ],
+    "icons" : [
+        {
+            "src" : "images/icons/icon-72x72.png",
+            "sizes" : "72x72",
+            "type" : "image/png",
+            "purpose" : "any"
+        },
+        {
+            "src" : "images/icons/icon-96x96.png",
+            "sizes" : "96x96",
+            "type" : "image/png",
+            "purpose" : "any"
+        },
+        {
+            "src" : "images/icons/icon-128x128.png",
+            "sizes" : "128x128",
+            "type" : "image/png",
+            "purpose" : "any"
+        },
+        {
+            "src" : "images/icons/icon-144x144.png",
+            "sizes" : "144x144",
+            "type" : "image/png",
+            "purpose" : "any"
+        },
+        {
+            "src" : "images/icons/icon-152x152.png",
+            "sizes" : "152x152",
+            "type" : "image/png",
+            "purpose" : "any"
+        },
+        {
+            "src" : "images/icons/icon-192x192.png",
+            "sizes" : "192x192",
+            "type" : "image/png",
+            "purpose" : "any"
+        },
+        {
+            "src" : "images/icons/icon-384x384.png",
+            "sizes" : "384x384",
+            "type" : "image/png",
+            "purpose" : "any"
+        },
+        {
+            "src" : "images/icons/icon-512x512.png",
+            "sizes" : "512x512",
+            "type" : "image/png",
+            "purpose" : "any"
+        }
+    ],
+    "screenshots" : [
+        {
+            "src" : "images/arrow.png",
+            "sizes" : "640x320",
+            "type" : "image/png",
+            "form_factor" : "narrow",
+            "label" : "PowerfulWebapps"
+        },
+        {
+            "src" : "images/arrow.png",
+            "sizes" : "640x320",
+            "type" : "image/png",
+            "form_factor" : "wide",
+            "label" : "PowerfulWebapps"
+        }
+    ],
+    "splash_pages" : "null"
+ }
+
+----------
+prg 9:
+
+gitppro:
+    <!-- https://api.github.com/users/' -->
+<script>
+    function gitdata(){
+
+    var url='https://api.github.com/users/'+document.getElementById('text_input').value;
+
+    fetch(url)
+    .then(response => response.json())
+    .then(data => {
+        console.log(data.avatar_url)
+        var im = document.getElementById("image");
+        im.setAttribute("src",data.avatar_url);
+        
+        var gi= document.getElementById('para');
+        gi.innerHTML=JSON.stringify(data);
+    })
+
+    .catch(function(response){
+        return response.status;
+        console.log(response.status);
+    });;
+    
+}
+</script>
+
+
+----------
+index.html:
+
+<script>
+    if('serviceWorker' in navigator){
+        window.addEventListener('load',()=>{
+            navigator.serviceWorker.register('sw.js')
+        .then(registration =>{
+            console.log('service worker is registered',registration);
+        })
+        .catch(err =>{
+            console.log('Registration failed',err);
+        })
+        })
+    }
+</script>
+-----
+sw.js:
+
+(function(){
+
+    self.addEventListener('install',event =>{
+        console.log('service worker installing');
+        // loading static html into cache first
+        event.waitUntil(
+            caches
+              .open('PWD_app')
+              .then(cache =>
+                cache.addAll([
+                  '/git'
+                ]) ))
+        self.skipWaiting();
+    })
+  
+    self.addEventListener('activate',event=>{
+        event.waitUntil(caches.delete('PWD_app'));
+        console.log('service worker activating...')
+    })
+  
+    self.addEventListener('fetch',event=>{
+        console.log('fetching',event.request.url);
+        event.respondWith(
+            // checking if the response is already in cache
+            caches.match(event.request).then(async (response) => {
+              if (response) {
+                return response
+              }
+            
+            // loading fetch responces into cache (conditional fetch need to be implemented to avoid unwanted caching)
+            let data = fetch(event.request);
+            let data_clone = (await data).clone();
+            event.waitUntil(caches.open('PWD_app').then(cache => cache.put(event.request, data_clone)));
+            
+            return data              
+           })
+          )
+    })
+  })
+
+---------------
+
+prg10:
+
+<script>
+    window.addEventListener('DOMContentLoaded',(event) => {
+        let source = ["https://financialmodelingprep.com/api/v3/balance-sheet-statement/AAPL?period=annual&apikey=RslEVBRQCqRMloHRNgFZKgkM1UhHPCKM"]
+        let index = 0
+        while(index < source.length){
+            console.log("fetching from"+ source[index]);
+            fetch(source[index])
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                let dat = JSON.stringify(data);
+                dat1 = data;
+                console.log(dat1);
+                let bod = document.getElementById("body");
+                var tb = document.getElementById("tbl");
+
+                for(let i=0;i<dat1.length;i++)
+                {
+                    var tr = document.createElement('tr');
+                    var td = document.createElement('td');
+
+                    td.innerHTML = dat1[i]["date"];
+                    tr.appendChild(td);
+                    tb.appendChild(tr);
+
+                    var td = document.createElement('td');
+
+                    td.innerHTML = dat1[i]["netReceivables"];
+                    tr.appendChild(td);
+                    tb.appendChild(tr);
+
+
+                    var td = document.createElement('td');
+
+                    td.innerHTML = dat1[i]["cashAndCashEquivalents"];
+                    tr.appendChild(td);
+                    tb.appendChild(tr);
+
+
+
+                    var td = document.createElement('td');
+
+                    td.innerHTML = dat1[i]["accountPayables"];
+                    tr.appendChild(td);
+                    tb.appendChild(tr);
+
+
+                                                        
+                    var td = document.createElement('td');
+
+                    td.innerHTML = dat1[i]["netDebt"];
+                    tr.appendChild(td);
+                    tb.appendChild(tr);
+
+
+
+                    var td = document.createElement('td');
+
+                    td.innerHTML = dat1[i]["totalEquity"];
+                    tr.appendChild(td);
+                    tb.appendChild(tr);
+
+
+
+                    var td = document.createElement('td');
+
+                    td.innerHTML = dat1[i]["longTermInvestments"];
+                    tr.appendChild(td);
+                    tb.appendChild(tr);
+                }
+            })
+            .catch(error => console.log('error', error));
+            index+=1;
+        }
+    });
+</script>
